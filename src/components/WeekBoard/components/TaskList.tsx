@@ -28,7 +28,7 @@ export default function TaskList({ day, taskList, onAddTask }: TaskListProps) {
     >
       <div
         className="groupBox"
-        ref={setNodeRef}
+        ref={boxRef.setNodeRef}
         style={{ background: boxRef.isOver ? "#e6f7ff" : "transparent" }}
       >
         <div className="groupBox-header" {...listeners}>

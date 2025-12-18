@@ -29,14 +29,14 @@ export function DayColumn({
         </div>
 
         <SortableContext
-          items={taskList.map((g) => `group:${g.id}`)}
+          items={taskList.map((g) => `list:${g.id}`)}
           strategy={verticalListSortingStrategy}
         >
-          {taskList.map((group) => (
+          {taskList.map((item) => (
             <TaskList
-              key={group.id}
+              key={item.id}
               day={day}
-              taskList={group}
+              taskList={item}
               onAddTask={onAddTask}
             />
           ))}
