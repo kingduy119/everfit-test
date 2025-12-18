@@ -22,5 +22,150 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-open-sans), system-ui, sans-serif;
 }
+
+.weekBoard {
+  padding-block: 60px;
+  padding-inline: 64px;
+  height: "100%";
+}
+
+.column-day { 
+  color: #728096; 
+  font-size: 15px; 
+  text-align: center; 
+}
+
+.dayText {
+  color: #728096;
+  text-align: center;
+  text-transform: uppercase;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 14px;
+}
+
+.column {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 400px;
+  background-color: #f3f5f8;
+}
+
+.columnHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dayNumber {
+  color: #728096;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.addButton {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  background-color: #9ca3af; 
+  color: #ffffff; 
+
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.addButton:hover {
+  background-color: #6b7280;
+}
+
+.addButton:active {
+  transform: scale(0.95);
+}
+
+
+.taskList {
+  background-color: #FFFFFFCC;
+  border: "1px solid #22242626";
+  border-radius: 6;
+  padding: 3;
+  margin-bottom: 8;
+  cursor: grab;
+}
+
+.groupBox {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: grab;
+}
+.groupBox-header {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.groupBox-bottom {
+  display: flex;
+  justify-content: flex-end; 
+}
+
+.groupBox-title {
+  color: #5a57cb;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 14px;
+
+  text-transform: uppercase;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task {
+  background: #FFFFFF;
+  border: 1px solid #DFDFDF;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  cursor: grab;
+  padding-inline: 8px;
+  padding-block: 5px;
+}
+
+.task-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: right;
+  color: #000000;
+}
+
+.task-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #919CAD;
+
+  font-style: normal;
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 14px;
+}
+
