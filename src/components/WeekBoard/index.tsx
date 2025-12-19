@@ -8,7 +8,7 @@ export default function WeekBoard() {
   const weekBoard = useWeekBoard();
 
   return (
-    <div className="weekBoard">
+    <div style={styles.container}>
       <DndContext
         collisionDetection={closestCorners}
         onDragEnd={weekBoard.onDragEnd}
@@ -35,3 +35,11 @@ export default function WeekBoard() {
     </div>
   );
 }
+
+const styles: Record<string, React.CSSProperties> = {
+  container: {
+    paddingBlock: "60px",
+    paddingInline: "64px",
+    height: "100%",
+  },
+};

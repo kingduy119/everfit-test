@@ -1,5 +1,7 @@
 ## Getting Started
 
+- require node 20
+
 First, run the development server:
 
 ```bash
