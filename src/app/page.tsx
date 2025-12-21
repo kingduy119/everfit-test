@@ -1,3 +1,5 @@
+"use client";
+
 import WeekBoard from "@/components/WeekBoard";
 
 export default function Home() {

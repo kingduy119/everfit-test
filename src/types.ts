@@ -16,13 +16,14 @@ export type DayColumnProps = {
   date: string;
   taskList: ListTask[];
   onAddGroup: () => void;
-  onAddTask: (day: string, groupId: string) => void;
+  onAddTask: (activeId: string) => void;
 };
 
 export type TaskListProps = {
   day: string;
+  activeId: string;
   taskList: ListTask;
-  onAddTask: (day: string, groupId: string) => void;
+  onAddTask: (activeId: string) => void;
 };
 
-export type TaskProps = { task: TaskType };
+export type TaskProps = { task: TaskType; activeId: string };

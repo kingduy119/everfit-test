@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { TaskListProps } from "@/types";
 import {
@@ -8,29 +10,32 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import Task from "./Task";
 
-export default function TaskList({ day, taskList, onAddTask }: TaskListProps) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({ id: `list:${taskList.id}` });
-
-  const droppableId = `${day}|${taskList.id}`;
+export default function TaskList({
+  day,
+  taskList,
+  activeId,
+  onAddTask,
+}: TaskListProps) {
+  const { setNodeRef, attributes, listeners, transform, transition, isOver } =
+    useSortable({ id: `list:${activeId}` });
 
   return (
     <div
-      ref={setNodeRef}
-      {...attributes}
       style={{
         ...styles.container,
+        background: isOver ? "yellow" : "#FFFFFFCC",
         transform: CSS.Transform.toString(transform),
         transition,
       }}
     >
-      <div style={styles.header} {...listeners}>
+      <div {...listeners} style={styles.header}>
         <div style={styles.title}>{taskList.title}</div>
         <Image
           src="/icons/three-dot-icon.svg"
           alt="Add"
           width={11}
           height={3}
+          style={styles.icon}
         />
       </div>
 
@@ -38,16 +43,14 @@ export default function TaskList({ day, taskList, onAddTask }: TaskListProps) {
         items={taskList.tasks.map((t) => t.id)}
         strategy={verticalListSortingStrategy}
       >
-        {taskList.tasks.map((task) => (
-          <Task key={task.id} task={task} />
-        ))}
+        <div ref={setNodeRef} {...attributes} style={styles.tasksContainer}>
+          {taskList.tasks.map((task, index) => (
+            <Task key={task.id} task={task} activeId={`${activeId},${index}`} />
+          ))}
+        </div>
       </SortableContext>
-
       <div style={styles.bottom}>
-        <button
-          style={styles.button}
-          onClick={() => onAddTask(day, taskList.id)}
-        >
+        <button style={styles.button} onClick={() => onAddTask(activeId)}>
           +
         </button>
       </div>
@@ -57,7 +60,7 @@ export default function TaskList({ day, taskList, onAddTask }: TaskListProps) {
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    backgroundColor: "#FFFFFFCC",
+    background: "#FFFFFFCC",
     border: "1px solid #22242626",
     borderRadius: 6,
     padding: 3,
@@ -67,11 +70,18 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: "column",
     gap: 5,
   },
+  tasksContainer: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.1rem",
+  },
   header: {
     display: "flex",
     flexWrap: "nowrap",
     justifyContent: "space-between",
+    alignItems: "center",
   },
+  icon: { width: "auto", height: 3 },
   title: {
     color: "#5a57cb",
     fontStyle: "normal",

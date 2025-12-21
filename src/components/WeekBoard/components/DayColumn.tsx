@@ -1,3 +1,5 @@
+"use client";
+
 import { useDroppable } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -15,12 +17,18 @@ export function DayColumn({
   onAddTask,
 }: DayColumnProps) {
   const dayNumber = date.split("/")[0];
-  const { setNodeRef } = useDroppable({ id: `day:${day}` });
+  const { setNodeRef, isOver } = useDroppable({ id: `column:${day}` });
 
   return (
-    <div>
+    <div style={styles.container}>
       <p style={styles.dayText}>{day.substring(0, 3)}</p>
-      <div style={styles.columns} ref={setNodeRef}>
+
+      <div
+        style={{
+          ...styles.columns,
+          background: isOver ? "#e6f7ff" : "#f3f5f8",
+        }}
+      >
         <div style={styles.header}>
           <div style={styles.day}>{dayNumber}</div>
           <button style={styles.button} onClick={onAddGroup}>
@@ -28,25 +36,32 @@ export function DayColumn({
           </button>
         </div>
 
-        <SortableContext
-          items={taskList.map((g) => `list:${g.id}`)}
-          strategy={verticalListSortingStrategy}
-        >
-          {taskList.map((item) => (
-            <TaskList
-              key={item.id}
-              day={day}
-              taskList={item}
-              onAddTask={onAddTask}
-            />
-          ))}
-        </SortableContext>
+        <div style={styles.taskList} ref={setNodeRef}>
+          <SortableContext
+            items={taskList.map((g) => `list:${g.id}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            {taskList.map((item, index) => (
+              <TaskList
+                key={item.id}
+                day={day}
+                activeId={`${day},${index}`}
+                taskList={item}
+                onAddTask={onAddTask}
+              />
+            ))}
+          </SortableContext>
+        </div>
       </div>
     </div>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
+  container: {
+    display: "flex",
+    flexDirection: "column",
+  },
   dayText: {
     color: "#728096",
     textAlign: "center",
@@ -57,17 +72,26 @@ const styles: Record<string, React.CSSProperties> = {
     lineHeight: "14px",
   },
   columns: {
+    flex: "1",
+    display: "flex",
+    flexDirection: "column",
+    //
     border: "1px solid #ddd",
     borderRadius: "8px",
-    padding: "8px",
-    minHeight: "400px",
-    backgroundColor: "#f3f5f8",
+    paddingBlock: "0.3rem",
+    paddingInline: "0.3rem",
+    // backgroundColor: "#f3f5f8",
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "8px",
+  },
+  taskList: {
+    flex: "1",
+    minHeight: 0,
+    height: "100%",
   },
   day: {
     color: "#728096",

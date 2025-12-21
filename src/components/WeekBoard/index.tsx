@@ -11,16 +11,11 @@ export default function WeekBoard() {
     <div style={styles.container}>
       <DndContext
         collisionDetection={closestCorners}
+        // onDragOver={weekBoard.onDragOver}
         onDragEnd={weekBoard.onDragEnd}
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7, 1fr)",
-            gap: 12,
-          }}
-        >
-          {DAYS.map((item) => (
+        <div style={styles.grid}>
+          {DAYS.map((item, index) => (
             <DayColumn
               key={item.day}
               day={item.day}
@@ -38,8 +33,15 @@ export default function WeekBoard() {
 
 const styles: Record<string, React.CSSProperties> = {
   container: {
-    paddingBlock: "60px",
-    paddingInline: "64px",
+    paddingBlock: "3.5rem",
+    paddingInline: "4rem",
     height: "100%",
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(7, 1fr)",
+    gap: "0.3rem",
+    height: "100%",
+    overflowY: "hidden",
   },
 };

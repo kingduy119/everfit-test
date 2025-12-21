@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { DragEndEvent, DragOverEvent } from "@dnd-kit/core";
 
@@ -12,6 +14,17 @@ export const DAYS = [
   { day: "saturday", date: "16/03/2025" },
   { day: "sunday", date: "17/03/2025" },
 ];
+
+const splitTaskList = (id: string) => {
+  const [day, list, task] = id.split(",");
+  return { day, list: Number(list), task: Number(task) };
+};
+
+type TaskLocateType = {
+  day: string;
+  list: number;
+  task: number;
+};
 
 export function useWeekBoard() {
   const [data, setData] = useState<BoardData>({
@@ -44,86 +57,54 @@ export function useWeekBoard() {
     sunday: [],
   });
 
-  const findGroupDay = (groupId: string) => {
-    return DAYS.find((d) => data[d.day].some((g) => g.id === groupId))?.day;
+  const setTaskListToColumn = (from: TaskLocateType, to: TaskLocateType) => {
+    setData((prev) => {
+      const state = structuredClone(prev);
+      const [taskList] = state[from.day].splice(from.list, 1);
+      state[to.day].push(taskList);
+      return state;
+    });
   };
 
-  const findTaskLocation = (taskId: string) => {
-    for (const d of DAYS) {
-      const day = d.day;
-      for (const g of data[day]) {
-        const index = g.tasks.findIndex((t) => t.id === taskId);
-        if (index !== -1) {
-          return { day, groupId: g.id, index };
-        }
-      }
-    }
-    return null;
+  const setTask = (from: TaskLocateType, to: TaskLocateType) => {
+    setData((prev) => {
+      const state = structuredClone(prev);
+      const [tasks] = state[from.day][from.list].tasks.splice(from.task, 1);
+      state[to.day][to.list].tasks.push(tasks);
+      return state;
+    });
   };
 
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    if (String(active.id).startsWith("group:")) {
-      const toDay = String(over.id).replace("day:", "");
-    }
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    console.log(`activeId=>${activeId}`);
+    console.log(`overId=>${overId}`);
   };
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    if (String(active.id).startsWith("list:")) {
-      const listId = String(active.id).replace("list:", "");
-      const toDay = String(over.id).replace("day:", "");
-      const fromDay = findGroupDay(listId);
-      if (!fromDay || fromDay === toDay) return;
+    const activeId = String(active.id);
+    const overId = String(over.id);
 
-      setData((prev) => {
-        const next = structuredClone(prev);
-        const listIndex = next[fromDay].findIndex((g) => g.id === listId);
-        const [group] = next[fromDay].splice(listIndex, 1);
-        next[toDay].push(group);
-        return next;
-      });
-      return;
-    }
-
-    if (String(active.id).startsWith("task:")) {
-      const taskId = String(active.id).replace("task:", "");
-      const from = findTaskLocation(taskId);
-      if (!from) return;
-
-      let toDay: string;
-      let toGroupId: string;
-
-      if (String(over.id).includes("|")) {
-        [toDay, toGroupId] = String(over.id).split("|");
-      } else {
-        const overTaskId = String(over.id).replace("task:", "");
-        const overLocation = findTaskLocation(overTaskId);
-        if (!overLocation) return;
-
-        toDay = overLocation.day;
-        toGroupId = overLocation.groupId;
-      }
-
-      setData((prev) => {
-        const next = structuredClone(prev);
-
-        const fromGroup = next[from.day].find((g) => g.id === from.groupId)!;
-        const [task] = fromGroup.tasks.splice(from.index, 1);
-
-        const toGroup = next[toDay].find((g) => g.id === toGroupId);
-        if (!toGroup) {
-          fromGroup.tasks.splice(from.index, 0, task);
-          return prev;
-        }
-
-        toGroup.tasks.push(task);
-        return next;
-      });
+    if (activeId.startsWith("list:") && overId.startsWith("column:")) {
+      const from = splitTaskList(activeId.replace("list:", ""));
+      const to = splitTaskList(overId.replace("column:", ""));
+      setTaskListToColumn(from, to);
+    } else if (activeId.startsWith("task:") && overId.startsWith("list:")) {
+      const from = splitTaskList(activeId.replace("task:", ""));
+      const to = splitTaskList(overId.replace("list:", ""));
+      setTask(from, to);
+    } else if (activeId.startsWith("task:") && overId.startsWith("task:")) {
+      const from = splitTaskList(activeId.replace("task:", ""));
+      const to = splitTaskList(overId.replace("task:", ""));
+      setTask(from, to);
     }
   };
 
@@ -136,14 +117,15 @@ export function useWeekBoard() {
     }));
   };
 
-  const addTask = (day: string, groupId: string) => {
+  const addTask = (activeId: string) => {
+    const from = splitTaskList(activeId);
     const title = prompt("Task title?");
     if (!title) return;
+
     setData((prev) => {
-      const next = structuredClone(prev);
-      const group = next[day].find((g) => g.id === groupId)!;
-      group.tasks.push({ id: crypto.randomUUID(), title });
-      return next;
+      const state = structuredClone(prev);
+      state[from.day][from.list].tasks.push({ id: crypto.randomUUID(), title });
+      return state;
     });
   };
 

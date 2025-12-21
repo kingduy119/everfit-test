@@ -1,10 +1,12 @@
+"use client";
+
 import { TaskProps } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-export default function Task({ task }: TaskProps) {
+export default function Task({ task, activeId }: TaskProps) {
   const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({ id: `task:${task.id}` });
+    useSortable({ id: `task:${activeId}` });
 
   return (
     <div
@@ -32,7 +34,6 @@ const styles: Record<string, React.CSSProperties> = {
     border: "1px solid #22242626",
     borderRadius: 6,
     padding: 3,
-    marginBottom: 8,
     cursor: "grab",
   },
   title: {
